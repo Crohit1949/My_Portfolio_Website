@@ -13,19 +13,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Match the Node.js version for your project
+        cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: |
+        npm install --legacy-peer-deps
+      env:
+        CI: true
 
-      - name: Run tests
-        run: npm test
+    - name: Run tests
+      run: |
+        npm test
+      env:
+        CI: true
 
-      - name: Build application
-        run: npm run build
+    - name: Build project (optional)
+      if: success()
+      run: |
+        npm run build
+
+    - name: Lint project (optional)
+      if: success()
+      run: |
+        npm run lint
